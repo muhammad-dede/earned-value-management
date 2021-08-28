@@ -64,7 +64,9 @@ class Kernel extends HttpKernel
         'signed' => \Illuminate\Routing\Middleware\ValidateSignature::class,
         'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
-        'menu_admin' => \App\Http\Middleware\MenuAdmin::class,
-        'menu_vendor' => \App\Http\Middleware\MenuVendor::class,
+        'akses_admin' => \App\Http\Middleware\_AksesAdmin::class,
+        'projek_create' => \App\Http\Middleware\ProjekCreate::class,
+        'projek_edit' => \App\Http\Middleware\ProjekEdit::class,
+        'projek_destroy' => \App\Http\Middleware\ProjekDestroy::class,
     ];
 }

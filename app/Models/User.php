@@ -53,4 +53,9 @@ class User extends Authenticatable
     {
         return $this->hasOne(Pegawai::class, 'id_user', 'id');
     }
+
+    public function vendor()
+    {
+        return $this->hasOne(Vendor::class, 'id_user', 'id');
+    }
 }

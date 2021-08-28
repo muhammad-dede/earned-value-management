@@ -6,6 +6,7 @@ use App\Models\Pegawai;
 use App\Models\Projek;
 use App\Models\Projek_Pegawai;
 use App\Models\Vendor;
+use App\Models\Vendor_PT;
 use Illuminate\Support\Facades\File;
 use Livewire\Component;
 use Livewire\WithFileUploads;
@@ -16,7 +17,7 @@ class Edit extends Component
 
     public $projek;
 
-    public $no_kontrak, $nama, $id_vendor, $tgl_kontrak, $tgl_mulai, $tgl_selesai, $durasi_kontrak, $nilai_kontrak, $file_izin_kerja, $file_kontrak, $approved_by;
+    public $no_kontrak, $nama, $id_vendor_pt, $tgl_kontrak, $tgl_mulai, $tgl_selesai, $durasi_kontrak, $nilai_kontrak, $file_izin_kerja, $file_kontrak, $approved_by;
 
     public $projek_pegawai = [];
 
@@ -25,7 +26,7 @@ class Edit extends Component
         $this->projek = $projek;
         $this->no_kontrak = $projek->no_kontrak;
         $this->nama = $projek->nama;
-        $this->id_vendor = $projek->id_vendor;
+        $this->id_vendor_pt = $projek->id_vendor_pt;
         $this->tgl_kontrak = $projek->tgl_kontrak;
         $this->tgl_mulai = $projek->tgl_mulai;
         $this->tgl_selesai = $projek->tgl_selesai;
@@ -45,9 +46,9 @@ class Edit extends Component
     public function render()
     {
         return view('livewire.projek.edit', [
-            'data_vendor' => Vendor::all(),
+            'data_vendor_pt' => Vendor_PT::all(),
             'data_pegawai' => Pegawai::where('id_jabatan', 1)->get(),
-            'data_projek_pegawai' => Pegawai::all(),
+            'data_projek_pegawai' => Pegawai::where('id_user', '!=', null)->get(),
         ]);
     }
 
@@ -70,9 +71,9 @@ class Edit extends Component
     public function save()
     {
         $this->validate([
-            'no_kontrak' => 'required|numeric|unique:projek,no_kontrak,' . $this->projek->id_projek . ',id_projek',
+            'no_kontrak' => 'required|unique:projek,no_kontrak,' . $this->projek->id_projek . ',id_projek',
             'nama' => 'required',
-            'id_vendor' => 'required',
+            'id_vendor_pt' => 'required',
             'tgl_kontrak' => 'required|date',
             'tgl_mulai' => 'required|date',
             'tgl_selesai' => 'required|date',
@@ -118,7 +119,7 @@ class Edit extends Component
         Projek::where('id_projek', $this->projek->id_projek)->update([
             'no_kontrak' => $this->no_kontrak,
             'nama' => ucwords($this->nama),
-            'id_vendor' => $this->id_vendor,
+            'id_vendor_pt' => $this->id_vendor_pt,
             'tgl_kontrak' => $this->tgl_kontrak,
             'tgl_mulai' => $this->tgl_mulai,
             'tgl_selesai' => $this->tgl_selesai,

@@ -39,8 +39,16 @@
                                         @method('put')
                                         <button type="submit" class="btn btn-{{ $projek->status->color }}">Projek
                                             Selesai</button>
+                                        <a href="{{ route('projek.tambah-surat-jalan', $projek) }}"
+                                            class="btn btn-secondary">
+                                            Upload Surat Jalan
+                                        </a>
                                     </form>
                                 @endif
+                            @endif
+                            @if ($projek->status->status == 'Dalam Pengerjaan' || $projek->status->status == 'Projek Selesai')
+                                <a href="{{ route('print-pdf', $projek) }}" class="btn btn-outline-danger"
+                                    target="_blank">Print PDF</a>
                             @endif
                             <a href="{{ route('projek.index') }}" class="btn btn-danger">Kembali</a>
                             {{-- <a href="{{ route('projek.index') }}" class="btn btn-danger float-sm-right">Kembali</a> --}}
@@ -55,7 +63,8 @@
                     <div class="col-12">
                         <div class="callout callout-info">
                             <h5><i class="fas fa-info"></i> Status Projek:</h5>
-                            <span class="badge badge-{{ $projek->status->color }}">{{ $projek->status->status }}</span>
+                            <span
+                                class="badge badge-{{ $projek->status->color }}">{{ $projek->status->status }}</span>
                         </div>
                         <div class="invoice p-3 mb-3">
                             <div class="row">
@@ -71,10 +80,9 @@
                                 <div class="col-sm-4 invoice-col">
                                     <span class="border-bottom">Perusahan Vendor</span>
                                     <address>
-                                        <strong>{{ $projek->vendor->vendor_pt->vendor }}</strong><br>
-                                        Telepon: {{ $projek->vendor->vendor_pt->telp }}<br>
-                                        Alamat: {{ $projek->vendor->vendor_pt->alamat }}<br>
-                                        Penanggung Jawab: {{ $projek->vendor->nama }}<br>
+                                        <strong>{{ $projek->vendor_pt->vendor }}</strong><br>
+                                        Telepon: {{ $projek->vendor_pt->telp }}<br>
+                                        Alamat: {{ $projek->vendor_pt->alamat }}<br>
                                     </address>
                                 </div>
                                 <div class="col-sm-4 invoice-col">
@@ -124,20 +132,18 @@
                                     </table>
                                 </div>
                             </div>
-                            @if ($projek->status->status == 'Dalam Pengerjaan')
-                                @if (auth()->user()->role->role == 'Super Admin' || auth()->user()->role->role == 'Manager')
-                                    <hr>
-                                    <div class="row">
-                                        <div class="col-9">
-                                            <h3>Laporan</h3>
-                                        </div>
-                                        <div class="col-3">
-                                            <a href="{{ route('projek.kurva', $projek) }}"
-                                                class="btn btn-primary btn-block float-right">Earned Value Analysis</a>
-                                        </div>
+                            @if ($projek->status->status == 'Dalam Pengerjaan' || $projek->status->status == 'Projek Selesai')
+                                <hr>
+                                <div class="row">
+                                    <div class="col-9">
+                                        <h3>Laporan</h3>
                                     </div>
-                                    <livewire:projek.proses :projek="$projek" />
-                                @endif
+                                    <div class="col-3">
+                                        <a href="{{ route('projek.kurva', $projek) }}"
+                                            class="btn btn-primary btn-block float-right">Earned Value Analysis</a>
+                                    </div>
+                                </div>
+                                <livewire:projek.proses :projek="$projek" />
                             @endif
                         </div>
                     </div>

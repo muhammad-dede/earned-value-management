@@ -18,14 +18,13 @@
                     <div class="col-12 col-sm-6 col-md-3">
                         <div class="info-box">
                             <span class="info-box-icon bg-info elevation-1">
-                                <i class="fas fa-people-carry"></i>
+                                <i class="fas fa-spinner"></i>
                             </span>
 
                             <div class="info-box-content">
-                                <span class="info-box-text">Peminjaman</span>
+                                <span class="info-box-text">Dalam Pengerjaan</span>
                                 <span class="info-box-number">
-                                    10
-                                    <small>%</small>
+                                    {{ $total_pengerjaan }}
                                 </span>
                             </div>
                             <!-- /.info-box-content -->
@@ -36,11 +35,11 @@
                     <div class="col-12 col-sm-6 col-md-3">
                         <div class="info-box mb-3">
                             <span class="info-box-icon bg-danger elevation-1">
-                                <i class="fas fas fa-clock"></i>
+                                <i class="fas fas fa-users"></i>
                             </span>
                             <div class="info-box-content">
-                                <span class="info-box-text">Jadwal Praktek Hari Ini</span>
-                                <span class="info-box-number">41,410</span>
+                                <span class="info-box-text">Total Pegawai</span>
+                                <span class="info-box-number">{{ $total_pegawai }}</span>
                             </div>
                             <!-- /.info-box-content -->
                         </div>
@@ -54,12 +53,12 @@
                     <div class="col-12 col-sm-6 col-md-3">
                         <div class="info-box mb-3">
                             <span class="info-box-icon bg-success elevation-1">
-                                <i class="fas fa-user-graduate"></i>
+                                <i class="fas fa-building"></i>
                             </span>
 
                             <div class="info-box-content">
-                                <span class="info-box-text">Siswa</span>
-                                <span class="info-box-number">760</span>
+                                <span class="info-box-text">Total Vendor</span>
+                                <span class="info-box-number">{{ $total_vendor }}</span>
                             </div>
                             <!-- /.info-box-content -->
                         </div>
@@ -69,12 +68,12 @@
                     <div class="col-12 col-sm-6 col-md-3">
                         <div class="info-box mb-3">
                             <span class="info-box-icon bg-warning elevation-1">
-                                <i class="fas fa-chalkboard-teacher"></i>
+                                <i class="fas fa-tasks"></i>
                             </span>
 
                             <div class="info-box-content">
-                                <span class="info-box-text">Guru</span>
-                                <span class="info-box-number">2,000</span>
+                                <span class="info-box-text">Total Projek</span>
+                                <span class="info-box-number">{{ $total_projek }}</span>
                             </div>
                             <!-- /.info-box-content -->
                         </div>

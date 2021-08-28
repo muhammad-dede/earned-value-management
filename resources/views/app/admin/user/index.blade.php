@@ -9,10 +9,7 @@
                         <h1>{{ $title }}</h1>
                     </div>
                     <div class="col-sm-6">
-                        @if (auth()->user()->role->role == 'Super Admin' || auth()->user()->role->role == 'Manager')
-                            <a href="{{ route('projek.create') }}"
-                                class="btn btn-primary float-sm-right rounded-0">Tambah</a>
-                        @endif
+                        <a href="{{ route('user.create') }}" class="btn btn-primary float-sm-right rounded-0">Tambah</a>
                     </div>
                 </div>
             </div>
@@ -27,51 +24,52 @@
                                     <thead>
                                         <tr class="text-center">
                                             <th>#</th>
-                                            <th>No Kontrak</th>
+                                            <th>Akun</th>
                                             <th>Nama</th>
-                                            <th>Tanggal Kontrak</th>
-                                            <th>Tanggal Mulai</th>
-                                            <th>Tanggal Selesai</th>
-                                            <th>Status</th>
+                                            <th>Tempat, Tanggal Lahir</th>
+                                            <th>Alamat</th>
+                                            <th>KTP</th>
+                                            <th>Asuransi</th>
+                                            <th>Pass Foto</th>
                                             <th>Opsi</th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        @foreach ($data_projek as $projek)
+                                        @foreach ($data_user as $user)
                                             <tr class="text-center">
                                                 <td>{{ $loop->iteration }}</td>
+                                                <td>{{ $user->user->email }}</td>
                                                 <td>
-                                                    <strong>{{ $projek->no_kontrak }}</strong> <br>
+                                                    <strong>{{ $user->nama }}</strong> <br>
+                                                    <small>Jabatan: {{ $user->ref_jabatan->jabatan }}</small><br>
+                                                    <small>Jenis Kelamin: {{ $user->jk }}</small>
                                                 </td>
-                                                <td>{{ $projek->nama }}</td>
-                                                <td>{{ \Carbon\Carbon::parse($projek->tgl_kontrak)->translatedFormat('d F Y') }}
+                                                <td>{{ $user->tempat_lahir }},&nbsp;
+                                                    {{ \Carbon\Carbon::parse($user->tgl_lahir)->translatedFormat('d F Y') }}
                                                 </td>
-                                                <td>{{ \Carbon\Carbon::parse($projek->tgl_mulai)->translatedFormat('d F Y') }}
-                                                </td>
-                                                <td>{{ \Carbon\Carbon::parse($projek->tgl_selesai)->translatedFormat('d F Y') }}
-                                                </td>
-                                                <td><span
-                                                        class="text-{{ $projek->status->color }}">{{ $projek->status->status }}</span>
+                                                <td>{{ $user->alamat }}</td>
+                                                <td>
+                                                    <img src="{{ asset('assets/file-pegawai') }}/{{ $user->file_ktp }}"
+                                                        alt="ktp" class="img-fluid" style="height: 75px;">
                                                 </td>
                                                 <td>
-                                                    <a href="{{ route('projek.show', $projek) }}"
-                                                        class="btn btn-info btn-sm rounded-0">Detail</a>
-                                                    @if ($projek->status->status !== 'Projek Selesai')
-                                                        @if (auth()->user()->role->role == 'Super Admin' || auth()->user()->role->role == 'Manager')
-                                                            <a href="{{ route('projek.edit', $projek) }}"
-                                                                class="btn btn-warning btn-sm rounded-0">Edit</a>
-                                                        @endif
-                                                        @if (auth()->user()->role->role == 'Super Admin')
-                                                            <form action="{{ route('projek.destroy', $projek) }}"
-                                                                class="d-inline" role="alert" alert-title="Hapus"
-                                                                alert-text="Yakin ingin menghapus?" method="POST">
-                                                                @csrf
-                                                                @method('delete')
-                                                                <button
-                                                                    class="btn btn-danger btn-sm rounded-0">Hapus</button>
-                                                            </form>
-                                                        @endif
-                                                    @endif
+                                                    <img src="{{ asset('assets/file-pegawai') }}/{{ $user->file_asuransi }}"
+                                                        alt="ktp" class="img-fluid" style="height: 75px;">
+                                                </td>
+                                                <td>
+                                                    <img src="{{ asset('assets/file-pegawai') }}/{{ $user->file_foto }}"
+                                                        alt="ktp" class="img-fluid" style="height: 75px;">
+                                                </td>
+                                                <td>
+                                                    <a href="{{ route('user.edit', $user) }}"
+                                                        class="btn btn-warning btn-sm rounded-0">Edit</a>
+                                                    <form action="{{ route('user.destroy', $user) }}" class="d-inline"
+                                                        role="alert" alert-title="Hapus" alert-text="Yakin ingin menghapus?"
+                                                        method="POST">
+                                                        @csrf
+                                                        @method('delete')
+                                                        <button class="btn btn-danger btn-sm rounded-0">Hapus</button>
+                                                    </form>
                                                 </td>
                                             </tr>
                                         @endforeach

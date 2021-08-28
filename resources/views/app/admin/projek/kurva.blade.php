@@ -76,96 +76,98 @@
                 </div>
             </div>
         </section>
-        <section class="content">
-            <div class="container-fluid">
-                <div class="row">
-                    <div class="col-12">
-                        <div class="callout callout-info">
-                            <h5>Earned Value Analysis: </h5>
-                            <figure class="highcharts-figure">
-                                <div id="eva"></div>
-                            </figure>
+        @if (auth()->user()->role->role !== 'Vendor')
+            <section class="content">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="callout callout-info">
+                                <h5>Earned Value Analysis: </h5>
+                                <figure class="highcharts-figure">
+                                    <div id="eva"></div>
+                                </figure>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
-        </section>
-        <section class="content">
-            <div class="container-fluid">
-                <div class="row">
-                    <div class="col-12">
-                        <div class="callout callout-info">
-                            <div class="row">
-                                <div class="col-6">
-                                    <h5>Keterangan: </h5>
-                                    <table>
-                                        <tbody>
-                                            <tr>
-                                                <td>CV (Cost Varian)</td>
-                                                <td>&nbsp;:&nbsp;</td>
-                                                <td class="font-weight-bold">Rp.
-                                                    {{ number_format($projek->earned_value->sum('cv'), 0, ',', '.') }}
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td>SV (Schedule Varian)</td>
-                                                <td>&nbsp;:&nbsp;</td>
-                                                <td class="font-weight-bold">Rp.
-                                                    {{ number_format($projek->earned_value->sum('sv'), 0, ',', '.') }}
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td>CPI (Cost Performance Index)</td>
-                                                <td>&nbsp;:&nbsp;</td>
-                                                <td class="font-weight-bold">
-                                                    {{ round($cpi, 2) }}</td>
-                                            </tr>
-                                            <tr>
-                                                <td>SPI (Shedule Performance Index)</td>
-                                                <td>&nbsp;:&nbsp;</td>
-                                                <td class="font-weight-bold">
-                                                    {{ round($spi, 2) }}</td>
-                                            </tr>
-                                            <tr>
-                                                <td>ETC (Estimate To Complete)</td>
-                                                <td>&nbsp;:&nbsp;</td>
-                                                <td class="font-weight-bold">
-                                                    {{ number_format($etc, 0, ',', '.') }}</td>
-                                            </tr>
-                                            <tr>
-                                                <td>EAC (Estimate At Complete)</td>
-                                                <td>&nbsp;:&nbsp;</td>
-                                                <td class="font-weight-bold">
-                                                    {{ number_format($eac, 0, ',', '.') }}</td>
-                                            </tr>
-                                            <tr>
-                                                <td>TE (Time Estimate)</td>
-                                                <td>&nbsp;:&nbsp;</td>
-                                                <td class="font-weight-bold">
-                                                    {{ round($te, 2) }} hari</td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
-                                </div>
-                                <div class="col-6">
-                                    <p class="font-weight-bold">Note:</p>
-                                    <ul>
-                                        <li>{{ $projek->earned_value->sum('cv') >= 0 ? 'CV : Biaya Proyek Lebih Kecil Dari Rencana' : 'CV =  Biaya Proyek Lebih Besar Dari Rencana' }}
-                                        </li>
-                                        <li>{{ $projek->earned_value->sum('sv') >= 0 ? 'SV : Penyelesaian Proyek Tepat Waktu' : 'SV =  Penyelesaian Proyek Tidak Tepat Waktu' }}
-                                        </li>
-                                        <li>{{ $cpi >= 0 ? 'CPI : Biaya Proyek Lebih Kecil Dari Rencana' : 'CPI = Biaya Proyek Libih Besar Rencana' }}
-                                        </li>
-                                        <li>{{ $spi >= 1 ? 'SPI : Penyelesaian Proyek Tepat Waktu' : 'SPI = Penyelesaian Proyek Tidak Tepat Waktu' }}
-                                        </li>
-                                    </ul>
+            </section>
+            <section class="content">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="callout callout-info">
+                                <div class="row">
+                                    <div class="col-6">
+                                        <h5>Keterangan: </h5>
+                                        <table>
+                                            <tbody>
+                                                <tr>
+                                                    <td>CV (Cost Varian)</td>
+                                                    <td>&nbsp;:&nbsp;</td>
+                                                    <td class="font-weight-bold">Rp.
+                                                        {{ number_format($projek->earned_value->sum('cv'), 0, ',', '.') }}
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>SV (Schedule Varian)</td>
+                                                    <td>&nbsp;:&nbsp;</td>
+                                                    <td class="font-weight-bold">Rp.
+                                                        {{ number_format($projek->earned_value->sum('sv'), 0, ',', '.') }}
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>CPI (Cost Performance Index)</td>
+                                                    <td>&nbsp;:&nbsp;</td>
+                                                    <td class="font-weight-bold">
+                                                        {{ round($cpi, 2) }}</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>SPI (Shedule Performance Index)</td>
+                                                    <td>&nbsp;:&nbsp;</td>
+                                                    <td class="font-weight-bold">
+                                                        {{ round($spi, 2) }}</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>ETC (Estimate To Complete)</td>
+                                                    <td>&nbsp;:&nbsp;</td>
+                                                    <td class="font-weight-bold">
+                                                        {{ number_format($etc, 0, ',', '.') }}</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>EAC (Estimate At Complete)</td>
+                                                    <td>&nbsp;:&nbsp;</td>
+                                                    <td class="font-weight-bold">
+                                                        {{ number_format($eac, 0, ',', '.') }}</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>TE (Time Estimate)</td>
+                                                    <td>&nbsp;:&nbsp;</td>
+                                                    <td class="font-weight-bold">
+                                                        {{ round($te, 2) }} hari</td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    <div class="col-6">
+                                        <p class="font-weight-bold">Note:</p>
+                                        <ul>
+                                            <li>{{ $projek->earned_value->sum('cv') >= 0 ? 'CV : Biaya Proyek Lebih Kecil Dari Rencana' : 'CV :  Biaya Proyek Lebih Besar Dari Rencana' }}
+                                            </li>
+                                            <li>{{ $projek->earned_value->sum('sv') >= 0 ? 'SV : Penyelesaian Proyek Tepat Waktu' : 'SV :  Penyelesaian Proyek Tidak Tepat Waktu' }}
+                                            </li>
+                                            <li>{{ $cpi >= 0 ? 'CPI : Biaya Proyek Lebih Kecil Dari Rencana' : 'CPI : Biaya Proyek Libih Besar Rencana' }}
+                                            </li>
+                                            <li>{{ $spi >= 1 ? 'SPI : Penyelesaian Proyek Tepat Waktu' : 'SPI : Penyelesaian Proyek Tidak Tepat Waktu' }}
+                                            </li>
+                                        </ul>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
-        </section>
+            </section>
+        @endif
     </div>
 @endsection
 

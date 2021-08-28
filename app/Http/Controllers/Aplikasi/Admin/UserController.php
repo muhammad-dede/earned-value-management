@@ -5,10 +5,13 @@ namespace App\Http\Controllers\Aplikasi\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Pegawai;
 use App\Models\Ref_Jabatan;
+use App\Models\Role;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Hash;
 
-class PegawaiController extends Controller
+class UserController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -18,13 +21,12 @@ class PegawaiController extends Controller
     public function index()
     {
         $data = [
-            'title' => 'Data Pegawai',
-            'menu' => 'pegawai',
-            'sub_menu' => 'pegawai',
-            'data_pegawai' => Pegawai::where('id_user', null)->get(),
+            'title' => 'Data User',
+            'menu' => 'user',
+            'sub_menu' => 'user',
+            'data_user' => Pegawai::where('id_user', '!=', null)->get(),
         ];
-
-        return view('app.admin.pegawai.index', $data);
+        return view('app.admin.user.index', $data);
     }
 
     /**
@@ -35,13 +37,13 @@ class PegawaiController extends Controller
     public function create()
     {
         $data = [
-            'title' => 'Tambah Data Pegawai',
-            'menu' => 'pegawai',
-            'sub_menu' => 'pegawai',
+            'title' => 'Tambah Data User',
+            'menu' => 'user',
+            'sub_menu' => 'user',
             'data_jabatan' => Ref_Jabatan::all(),
+            'data_role' => Role::where('role', '!=', 'Vendor')->get(),
         ];
-
-        return view('app.admin.pegawai.create', $data);
+        return view('app.admin.user.create', $data);
     }
 
     /**
@@ -62,6 +64,9 @@ class PegawaiController extends Controller
             'file_asuransi' => 'required|mimes:png,jpeg,jpg|max:2048',
             'file_foto' => 'required|mimes:png,jpeg,jpg|max:2048',
             'id_jabatan' => 'required',
+            'email' => 'required|email|unique:user,email',
+            'password' => 'required|min:8',
+            'id_role' => 'required',
         ]);
 
         if ($request->file_ktp !== null) {
@@ -78,6 +83,12 @@ class PegawaiController extends Controller
             $file_foto = 'FOTO-' . time() . '.' . $request->file_foto->extension();
             $request->file_foto->move(public_path('assets/file-pegawai'), $file_foto);
         }
+
+        $user = User::create([
+            'email' => $request->email,
+            'password' => Hash::make($request->password),
+            'id_role' => $request->id_role,
+        ]);
 
         Pegawai::create([
             'nama' => ucwords($request->nama),
@@ -89,10 +100,10 @@ class PegawaiController extends Controller
             'file_asuransi' => $file_asuransi,
             'file_foto' => $file_foto,
             'id_jabatan' => $request->id_jabatan,
-            'id_user' => null,
+            'id_user' => $user->id,
         ]);
 
-        return redirect()->route('pegawai.index')->with('toast_success', 'Berhasil Menambahkan Data Pegawai');
+        return redirect()->route('user.index')->with('toast_success', 'Berhasil Menambahkan Data User');
     }
 
     /**
@@ -101,7 +112,7 @@ class PegawaiController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show(Pegawai $user)
     {
         //
     }
@@ -112,17 +123,18 @@ class PegawaiController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit(Pegawai $pegawai)
+    public function edit(Pegawai $user)
     {
         $data = [
             'title' => 'Ubah Data Pegawai',
             'menu' => 'pegawai',
             'sub_menu' => 'pegawai',
             'data_jabatan' => Ref_Jabatan::all(),
-            'pegawai' => $pegawai,
+            'data_role' => Role::where('role', '!=', 'Vendor')->get(),
+            'user' => $user,
         ];
 
-        return view('app.admin.pegawai.edit', $data);
+        return view('app.admin.user.edit', $data);
     }
 
     /**
@@ -132,7 +144,7 @@ class PegawaiController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Pegawai $pegawai)
+    public function update(Request $request, Pegawai $user)
     {
         $request->validate([
             'nama' => 'required',
@@ -141,7 +153,15 @@ class PegawaiController extends Controller
             'tgl_lahir' => 'required',
             'alamat' => 'required',
             'id_jabatan' => 'required',
+            'email' => 'required|email|unique:user,email,' . $user->id_user . ',id',
+            'id_role' => 'required',
         ]);
+
+        if ($request->password !== null) {
+            $request->validate([
+                'password' => 'required|min:8',
+            ]);
+        }
 
         if ($request->file_ktp !== null) {
             $request->validate([
@@ -150,9 +170,9 @@ class PegawaiController extends Controller
 
             $file_ktp = 'KTP-' . time() . '.' . $request->file_ktp->extension();
             $request->file_ktp->move(public_path('assets/file-pegawai'), $file_ktp);
-            File::delete('assets/file-pegawai/' . $pegawai->file_ktp);
+            File::delete('assets/file-pegawai/' . $user->file_ktp);
         } else {
-            $file_ktp = $pegawai->file_ktp;
+            $file_ktp = $user->file_ktp;
         }
 
         if ($request->file_asuransi !== null) {
@@ -162,9 +182,9 @@ class PegawaiController extends Controller
 
             $file_asuransi = 'ASURANSI-' . time() . '.' . $request->file_asuransi->extension();
             $request->file_asuransi->move(public_path('assets/file-pegawai'), $file_asuransi);
-            File::delete('assets/file-pegawai/' . $pegawai->file_asuransi);
+            File::delete('assets/file-pegawai/' . $user->file_asuransi);
         } else {
-            $file_asuransi = $pegawai->file_asuransi;
+            $file_asuransi = $user->file_asuransi;
         }
 
         if ($request->file_foto !== null) {
@@ -174,12 +194,23 @@ class PegawaiController extends Controller
 
             $file_foto = 'FOTO-' . time() . '.' . $request->file_foto->extension();
             $request->file_foto->move(public_path('assets/file-pegawai'), $file_foto);
-            File::delete('assets/file-pegawai/' . $pegawai->file_foto);
+            File::delete('assets/file-pegawai/' . $user->file_foto);
         } else {
-            $file_foto = $pegawai->file_foto;
+            $file_foto = $user->file_foto;
         }
 
-        Pegawai::where('id_pegawai', $pegawai->id_pegawai)->update([
+        User::where('id', $user->id_user)->update([
+            'email' => $request->email,
+            'id_role' => $request->id_role,
+        ]);
+
+        if ($request->password !== null) {
+            User::where('id', $user->id_user)->update([
+                'password' => Hash::make($request->password),
+            ]);
+        }
+
+        Pegawai::where('id_pegawai', $user->id_pegawai)->update([
             'nama' => ucwords($request->nama),
             'jk' => $request->jk,
             'tempat_lahir' => ucwords($request->tempat_lahir),
@@ -191,7 +222,7 @@ class PegawaiController extends Controller
             'id_jabatan' => $request->id_jabatan,
         ]);
 
-        return redirect()->route('pegawai.index')->with('toast_success', 'Berhasil Mengubah Data Pegawai');
+        return redirect()->route('user.index')->with('toast_success', 'Berhasil Mengubah Data User');
     }
 
     /**
@@ -200,9 +231,8 @@ class PegawaiController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Pegawai $pegawai)
+    public function destroy($id)
     {
-        $pegawai->delete();
-        return redirect()->route('pegawai.index')->with('toast_success', 'Berhasil Menghapus Data Pegawai');
+        //
     }
 }

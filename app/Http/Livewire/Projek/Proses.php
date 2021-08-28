@@ -54,6 +54,11 @@ class Proses extends Component
         $this->nav = 'laporan';
     }
 
+    public function nav_surat_jalan()
+    {
+        $this->nav = 'surat-jalan';
+    }
+
     public function tambah_schedule()
     {
         $this->schedule = null;

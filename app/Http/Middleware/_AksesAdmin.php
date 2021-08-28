@@ -5,7 +5,7 @@ namespace App\Http\Middleware;
 use Closure;
 use Illuminate\Http\Request;
 
-class MenuVendor
+class _AksesAdmin
 {
     /**
      * Handle an incoming request.
@@ -16,9 +16,11 @@ class MenuVendor
      */
     public function handle(Request $request, Closure $next)
     {
-        if (auth()->user()->role->role == 'Vendor') {
+        if (auth()->user()->role->role == 'Super Admin') {
+            # code...
             return $next($request);
         }
+
         return abort('404');
     }
 }

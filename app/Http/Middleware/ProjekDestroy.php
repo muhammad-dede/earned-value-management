@@ -5,7 +5,7 @@ namespace App\Http\Middleware;
 use Closure;
 use Illuminate\Http\Request;
 
-class MenuAdmin
+class ProjekDestroy
 {
     /**
      * Handle an incoming request.
@@ -16,7 +16,7 @@ class MenuAdmin
      */
     public function handle(Request $request, Closure $next)
     {
-        if (auth()->user()->role->role !== 'Vendor') {
+        if (auth()->user()->role->role == 'Super Admin') {
             return $next($request);
         }
 

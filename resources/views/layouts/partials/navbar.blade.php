@@ -15,7 +15,11 @@
         </li>
         <li class="nav-item dropdown">
             <a class="nav-link" data-toggle="dropdown" href="#">
-                <span class="font-weight-bold">{{ auth()->user()->email }}</span>
+                @if (auth()->user()->role->role == 'Vendor')
+                    <span class="font-weight-bold">{{ auth()->user()->vendor->nama }}</span>
+                @else
+                    <span class="font-weight-bold">{{ auth()->user()->pegawai->nama }}</span>
+                @endif
             </a>
             <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
                 <a href="#" class="dropdown-item">

@@ -6,6 +6,7 @@ use App\Models\Pegawai;
 use App\Models\Projek;
 use App\Models\Projek_Pegawai;
 use App\Models\Vendor;
+use App\Models\Vendor_PT;
 use Illuminate\Support\Facades\File;
 use Livewire\Component;
 use Livewire\WithFileUploads;
@@ -14,7 +15,7 @@ class Create extends Component
 {
     use WithFileUploads;
 
-    public $no_kontrak, $nama, $id_vendor, $tgl_kontrak, $tgl_mulai, $tgl_selesai, $durasi_kontrak, $nilai_kontrak, $file_izin_kerja, $file_kontrak, $approved_by;
+    public $no_kontrak, $nama, $id_vendor_pt, $tgl_kontrak, $tgl_mulai, $tgl_selesai, $durasi_kontrak, $nilai_kontrak, $file_izin_kerja, $file_kontrak, $approved_by;
 
     public $projek_pegawai = [];
 
@@ -28,9 +29,9 @@ class Create extends Component
     public function render()
     {
         return view('livewire.projek.create', [
-            'data_vendor' => Vendor::all(),
+            'data_vendor_pt' => Vendor_PT::all(),
             'data_pegawai' => Pegawai::where('id_jabatan', 1)->get(),
-            'data_projek_pegawai' => Pegawai::all(),
+            'data_projek_pegawai' => Pegawai::where('id_user', '!=', null)->get(),
         ]);
     }
 
@@ -50,9 +51,9 @@ class Create extends Component
     public function save()
     {
         $this->validate([
-            'no_kontrak' => 'required|numeric|unique:projek,no_kontrak',
+            'no_kontrak' => 'required|unique:projek,no_kontrak',
             'nama' => 'required',
-            'id_vendor' => 'required',
+            'id_vendor_pt' => 'required',
             'tgl_kontrak' => 'required|date',
             'tgl_mulai' => 'required|date',
             'tgl_selesai' => 'required|date',
@@ -86,7 +87,7 @@ class Create extends Component
         $projek = Projek::create([
             'no_kontrak' => $this->no_kontrak,
             'nama' => ucwords($this->nama),
-            'id_vendor' => $this->id_vendor,
+            'id_vendor_pt' => $this->id_vendor_pt,
             'tgl_kontrak' => $this->tgl_kontrak,
             'tgl_mulai' => $this->tgl_mulai,
             'tgl_selesai' => $this->tgl_selesai,

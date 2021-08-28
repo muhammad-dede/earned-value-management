@@ -15,7 +15,7 @@ class Projek extends Model
 
     protected $fillable = [
         'id_projek',
-        'id_vendor',
+        'id_vendor_pt',
         'no_kontrak',
         'nama',
         'tgl_kontrak',
@@ -29,9 +29,9 @@ class Projek extends Model
         'id_status',
     ];
 
-    public function vendor()
+    public function vendor_pt()
     {
-        return $this->belongsTo(Vendor::class, 'id_vendor', 'id_vendor');
+        return $this->belongsTo(Vendor_PT::class, 'id_vendor_pt', 'id_vendor_pt');
     }
 
     public function approve()
@@ -67,5 +67,10 @@ class Projek extends Model
     public function laporan_pekerjaan()
     {
         return $this->hasMany(Laporan_Pekerjaan::class, 'id_projek', 'id_projek');
+    }
+
+    public function surat_jalan()
+    {
+        return $this->hasMany(Surat_Jalan::class, 'id_projek', 'id_projek');
     }
 }

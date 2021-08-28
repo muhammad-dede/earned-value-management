@@ -6,17 +6,20 @@ use App\Http\Controllers\Controller;
 use App\Models\Laporan_Pekerjaan;
 use App\Models\Laporan_Pengeluaran;
 use App\Models\Projek;
+use App\Models\Surat_Jalan;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
 
 class ProjekController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
+    public function __construct()
+    {
+        $this->middleware('projek_create')->only(['create']);
+        $this->middleware('projek_edit')->only(['edit']);
+        $this->middleware('projek_destroy')->only(['destroy']);
+    }
+
     public function index()
     {
         $data = [
@@ -28,11 +31,6 @@ class ProjekController extends Controller
         return view('app.admin.projek.index', $data);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
     public function create()
     {
         $data = [
@@ -43,23 +41,11 @@ class ProjekController extends Controller
         return view('app.admin.projek.create', $data);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
     public function store(Request $request)
     {
         //
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function show(Projek $projek)
     {
         $data = [
@@ -71,12 +57,6 @@ class ProjekController extends Controller
         return view('app.admin.projek.show', $data);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function edit(Projek $projek)
     {
         $data = [
@@ -88,13 +68,6 @@ class ProjekController extends Controller
         return view('app.admin.projek.edit', $data);
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function update(Request $request, Projek $projek)
     {
         if ($projek->id_status == 1) {
@@ -114,12 +87,6 @@ class ProjekController extends Controller
         return redirect()->route('projek.show', $projek)->with('toast_success', 'Berhasil Mengubah Status Projek');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function destroy(Projek $projek)
     {
         File::delete('assets/projek/' . $projek->file_izin_kerja);
@@ -190,11 +157,85 @@ class ProjekController extends Controller
     public function detail_laporan_pengeluaran(Laporan_Pekerjaan $laporan_pekerjaan)
     {
         return view('app.admin.projek.laporan-pengeluaran', [
-            'title' => 'Detail Laporan Pengeluaran',
+            'title' => 'Detail Laporan Pekerjaan',
             'menu' => 'projek',
             'sub_menu' => 'projek',
             'data_laporan_pengeluaran' => Laporan_Pengeluaran::where('id_laporan_pekerjaan', $laporan_pekerjaan->id_laporan_pekerjaan)->get(),
             'laporan_pekerjaan' => $laporan_pekerjaan,
         ]);
+    }
+
+    public function tambah_surat_jalan(Projek $projek)
+    {
+        return view('app.admin.projek.tambah-surat-jalan', [
+            'title' => 'Tambah Surat Jalan',
+            'menu' => 'projek',
+            'sub_menu' => 'projek',
+            'projek' => $projek,
+        ]);
+    }
+
+    public function upload_surat_jalan(Request $request, Projek $projek)
+    {
+        $request->validate([
+            'keterangan' => 'required',
+            'tgl_surat' => 'required',
+            'file_surat' => 'required|mimes:pdf|max:2048',
+        ]);
+
+        if ($request->file_surat !== null) {
+            $file_surat = 'SJ-' . time() . '.' . $request->file_surat->extension();
+            $request->file_surat->move(public_path('assets/file-surat-jalan'), $file_surat);
+        }
+
+        Surat_Jalan::create([
+            'no_surat_jalan' => time(),
+            'id_projek' => $projek->id_projek,
+            'keterangan' => $request->keterangan,
+            'tgl_surat' => $request->tgl_surat,
+            'file_surat' => $file_surat,
+        ]);
+
+        return redirect()->route('projek.show', $projek)->with('toast_success', 'Berhasil Upload Surat Jalan');
+    }
+
+    public function edit_surat_jalan($no_surat_Jalan)
+    {
+        return view('app.admin.projek.edit-surat-jalan', [
+            'title' => 'Edit Surat Jalan',
+            'menu' => 'projek',
+            'sub_menu' => 'projek',
+            'surat_jalan' => Surat_Jalan::where('no_surat_jalan', $no_surat_Jalan)->first(),
+        ]);
+    }
+
+    public function update_surat_jalan(Request $request, $no_surat_Jalan)
+    {
+        $request->validate([
+            'keterangan' => 'required',
+            'tgl_surat' => 'required',
+        ]);
+
+        $surat_Jalan = Surat_Jalan::where('no_surat_jalan', $no_surat_Jalan)->first();
+
+        if ($request->file_surat !== null) {
+            $request->validate([
+                'file_surat' => 'required|mimes:pdf|max:2048',
+            ]);
+            $file_surat = 'SJ-' . time() . '.' . $request->file_surat->extension();
+            $request->file_surat->move(public_path('assets/file-surat-jalan'), $file_surat);
+            File::delete('assets/file-surat-jalan/' . $surat_Jalan->file_surat);
+        } else {
+            $file_surat = $surat_Jalan->file_surat;
+        }
+
+        Surat_Jalan::where('no_surat_jalan', $no_surat_Jalan)->update([
+            'id_projek' => $surat_Jalan->id_projek,
+            'keterangan' => $request->keterangan,
+            'tgl_surat' => $request->tgl_surat,
+            'file_surat' => $file_surat,
+        ]);
+
+        return redirect()->route('projek.show', $surat_Jalan->id_projek)->with('toast_success', 'Berhasil Ubah Surat Jalan');
     }
 }

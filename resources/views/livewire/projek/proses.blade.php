@@ -11,6 +11,11 @@
                     id="laporan-tab" data-toggle="tab" href="#laporan" role="tab" aria-controls="laporan"
                     aria-selected="{{ $nav == 'laporan' ? 'true' : 'false' }}">Laporan</a>
             </li>
+            <li class="nav-item" role="presentation">
+                <a wire:click.prevent="nav_surat_jalan" class="nav-link {{ $nav == 'surat-jalan' ? 'active' : '' }}"
+                    id="surat-jalan-tab" data-toggle="tab" href="#surat-jalan" role="tab" aria-controls="surat-jalan"
+                    aria-selected="{{ $nav == 'surat-jalan' ? 'true' : 'false' }}">Surat Jalan</a>
+            </li>
         </ul>
         <div class="tab-content" id="myTabContent">
             <div class="tab-pane fade {{ $nav == 'schedule' ? 'show active' : '' }}" id="schedule" role="tabpanel"
@@ -30,12 +35,17 @@
                                 <th>Biaya (Rp.)</th>
                                 <th>Bobot Total</th>
                                 <th>Bobot Hari</th>
-                                <th>
-                                    <button wire:click.prevent="tambah_schedule" type="button"
-                                        class="btn btn-sm btn-success" data-toggle="modal" data-target="#scheduleModal">
-                                        <i class="fas fa-plus-square"></i>
-                                    </button>
-                                </th>
+                                @if ($projek->status->status == 'Dalam Pengerjaan')
+                                    @if (auth()->user()->role->role == 'Super Admin' || auth()->user()->role->role == 'Manager')
+                                        <th>
+                                            <button wire:click.prevent="tambah_schedule" type="button"
+                                                class="btn btn-sm btn-success" data-toggle="modal"
+                                                data-target="#scheduleModal">
+                                                <i class="fas fa-plus-square"></i>
+                                            </button>
+                                        </th>
+                                    @endif
+                                @endif
                             </tr>
                         </thead>
                         <tbody>
@@ -51,13 +61,17 @@
                                     <td>{{ number_format($schedule->biaya, 0, ',', '.') }}</td>
                                     <td>{{ round($schedule->bobot_total, 2) }} %</td>
                                     <td>{{ round($schedule->bobot_hari, 2) }} %</td>
-                                    <td>
-                                        <button wire:click.prevent="ubah_schedule({{ $schedule }})"
-                                            class="btn btn-sm btn-warning" data-toggle="modal"
-                                            data-target="#scheduleModal"><i class="fas fa-info"></i></button>
-                                        <button wire:click.prevent="hapus_schedule({{ $schedule }})"
-                                            class="btn btn-sm btn-danger"><i class="fas fa-trash"></i></button>
-                                    </td>
+                                    @if ($projek->status->status == 'Dalam Pengerjaan')
+                                        @if (auth()->user()->role->role == 'Super Admin' || auth()->user()->role->role == 'Manager')
+                                            <td>
+                                                <button wire:click.prevent="ubah_schedule({{ $schedule }})"
+                                                    class="btn btn-sm btn-warning" data-toggle="modal"
+                                                    data-target="#scheduleModal"><i class="fas fa-info"></i></button>
+                                                <button wire:click.prevent="hapus_schedule({{ $schedule }})"
+                                                    class="btn btn-sm btn-danger"><i class="fas fa-trash"></i></button>
+                                            </td>
+                                        @endif
+                                    @endif
                                 </tr>
                             @empty
                                 <tr>
@@ -82,11 +96,15 @@
                                     <th>Pekerjaan</th>
                                     <th>Tanggal</th>
                                     <th>
-                                        <button wire:click.prevent="tambah_laporan" type="button"
-                                            class="btn btn-sm btn-success" data-toggle="modal"
-                                            data-target="#laporanModal">
-                                            Tambah
-                                        </button>
+                                        @if ($projek->status->status == 'Dalam Pengerjaan')
+                                            @if (auth()->user()->role->role == 'Super Admin' || auth()->user()->role->role == 'Manager')
+                                                <button wire:click.prevent="tambah_laporan" type="button"
+                                                    class="btn btn-sm btn-success" data-toggle="modal"
+                                                    data-target="#laporanModal">
+                                                    Tambah
+                                                </button>
+                                            @endif
+                                        @endif
                                     </th>
                                 </tr>
                             </thead>
@@ -97,11 +115,61 @@
                                         <td>{{ $pekerjaan->schedule->pekerjaan }}</td>
                                         <td>{{ $pekerjaan->tgl }}</td>
                                         <td>
-                                            <button wire:click.prevent="ubah_laporan({{ $pekerjaan }})"
-                                                class="btn btn-sm btn-warning" data-toggle="modal"
-                                                data-target="#laporanModal">Ubah</button>
+                                            @if ($projek->status->status == 'Dalam Pengerjaan')
+                                                @if (auth()->user()->role->role == 'Super Admin' || auth()->user()->role->role == 'Manager')
+                                                    <button wire:click.prevent="ubah_laporan({{ $pekerjaan }})"
+                                                        class="btn btn-sm btn-warning" data-toggle="modal"
+                                                        data-target="#laporanModal">Ubah</button>
+                                                @endif
+                                            @endif
                                             <a href="{{ route('projek.laporan-pengeluaran', $pekerjaan) }}"
                                                 class="btn btn-sm btn-info">Detail</a>
+                                        </td>
+                                    </tr>
+                                @empty
+                                    <tr>
+                                        <td colspan="9" class="text-center">Tidak ada laporan pekerjaan</td>
+                                    </tr>
+                                @endforelse
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="tab-pane fade {{ $nav == 'surat-jalan' ? 'show active' : '' }}" id="surat-jalan"
+                role="tabpanel" aria-labelledby="laporan-tab">
+                <div class="surat-jalan-pekerjaan">
+                    <div class="alert alert-info my-3">
+                        Surat Jalan
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr class="text-center">
+                                    <th>#</th>
+                                    <th>Keterangan</th>
+                                    <th>Tanggal</th>
+                                    <th>File</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @forelse ($projek->surat_jalan as $surat_jalan)
+                                    <tr class="text-center">
+                                        <td>{{ $loop->iteration }}</td>
+                                        <td>{{ $surat_jalan->keterangan }}</td>
+                                        <td>{{ $surat_jalan->tgl_surat }}</td>
+                                        <td>
+                                            <a href="{{ asset('assets/file-surat-jalan') }}/{{ $surat_jalan->file_surat }}"
+                                                target="_blank">{{ $surat_jalan->file_surat }}</a>
+                                        </td>
+                                        <td>
+                                            @if ($projek->status->status == 'Dalam Pengerjaan')
+                                                @if (auth()->user()->role->role == 'Super Admin' || auth()->user()->role->role == 'Manager')
+                                                    <a href="{{ route('projek.edit-surat-jalan', $surat_jalan) }}"
+                                                        class="btn btn-warning">Ubah</a>
+                                                @endif
+                                            @endif
                                         </td>
                                     </tr>
                                 @empty

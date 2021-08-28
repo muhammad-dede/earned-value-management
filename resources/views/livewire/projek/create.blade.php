@@ -25,17 +25,16 @@
             </div>
         </div>
         <div class="form-group">
-            <label for="id_vendor"><code>Vendor</code></label>
-            <select wire:model="id_vendor" name="id_vendor" id="id_vendor"
-                class="form-control rounded-0 @error('id_vendor') is-invalid @enderror" style="width: 100%;">
+            <label for="id_vendor_pt"><code>Vendor</code></label>
+            <select wire:model="id_vendor_pt" name="id_vendor_pt" id="id_vendor_pt"
+                class="form-control rounded-0 @error('id_vendor_pt') is-invalid @enderror" style="width: 100%;">
                 <option value="" selected></option>
-                @foreach ($data_vendor as $vendor)
-                    <option value="{{ $vendor->id_vendor }}">
-                        {{ $vendor->vendor_pt->vendor }}
-                        - {{ $vendor->nama }}</option>
+                @foreach ($data_vendor_pt as $vendor)
+                    <option value="{{ $vendor->id_vendor_pt }}">
+                        {{ $vendor->vendor }}</option>
                 @endforeach
             </select>
-            @error('id_vendor')
+            @error('id_vendor_pt')
                 <div class="invalid-feedback">{{ $message }}</div>
             @enderror
         </div>

@@ -67,30 +67,56 @@
                                     </table>
                                 </div>
                             </div>
+                            @if (auth()->user()->role->role !== 'Vendor')
+                                <div class="row">
+                                    <div class="col-12 table-responsive">
+                                        <table class="table table-striped">
+                                            <thead>
+                                                <tr class="text-center">
+                                                    <th>#</th>
+                                                    <th>Rincian</th>
+                                                    <th>Satuan</th>
+                                                    <th>Qty</th>
+                                                    <th>Biaya</th>
+                                                    <th>Total Biaya</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @foreach ($data_laporan_pengeluaran as $pengeluaran)
+                                                    <tr class="text-center">
+                                                        <td>{{ $loop->iteration }}</td>
+                                                        <td>{{ $pengeluaran->rincian }}</td>
+                                                        <td>{{ $pengeluaran->ref_satuan->satuan }}</td>
+                                                        <td>{{ $pengeluaran->qty }}</td>
+                                                        <td>{{ $pengeluaran->biaya }}</td>
+                                                        <td>{{ $pengeluaran->total_biaya }}</td>
+                                                    </tr>
+                                                @endforeach
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            @endif
                             <div class="row">
                                 <div class="col-12 table-responsive">
                                     <table class="table table-striped">
                                         <thead>
                                             <tr class="text-center">
-                                                <th>#</th>
-                                                <th>Rincian</th>
-                                                <th>Satuan</th>
-                                                <th>Qty</th>
-                                                <th>Biaya</th>
-                                                <th>Total Biaya</th>
+                                                <th>Bukti Pekerjaan</th>
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            @foreach ($data_laporan_pengeluaran as $pengeluaran)
-                                                <tr class="text-center">
-                                                    <td>{{ $loop->iteration }}</td>
-                                                    <td>{{ $pengeluaran->rincian }}</td>
-                                                    <td>{{ $pengeluaran->ref_satuan->satuan }}</td>
-                                                    <td>{{ $pengeluaran->qty }}</td>
-                                                    <td>{{ $pengeluaran->biaya }}</td>
-                                                    <td>{{ $pengeluaran->total_biaya }}</td>
-                                                </tr>
-                                            @endforeach
+                                            <tr class="text-center">
+                                                <td>
+                                                    @foreach ($laporan_pekerjaan->laporan_foto as $laporan_foto)
+                                                        <a href="{{ asset('assets/laporan-foto') }}/{{ $laporan_foto->foto }}"
+                                                            target="_blank">
+                                                            <img src="{{ asset('assets/laporan-foto') }}/{{ $laporan_foto->foto }}"
+                                                                alt="bukti" class="img-fluid mx-3" style="height: 200px;">
+                                                        </a>
+                                                    @endforeach
+                                                </td>
+                                            </tr>
                                         </tbody>
                                     </table>
                                 </div>
